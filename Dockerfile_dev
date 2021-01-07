@@ -1,0 +1,23 @@
+# For githook project
+# @version 1.0
+
+FROM python:3.8
+LABEL maintainer="chariothy@gmail.com"
+
+COPY ./requirements.txt .
+
+RUN pip install -U pip \
+  && pip install --no-cache-dir -r ./requirements.txt
+
+ARG UNAME=henry
+ARG UID=1000
+ARG GID=1000
+
+RUN groupadd -g $GID -o $UNAME \
+  && useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME \
+  && usermod -G root $UNAME
+USER $UNAME
+
+WORKDIR /app
+
+CMD [ "python" ]

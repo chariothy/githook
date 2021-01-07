@@ -1,0 +1,21 @@
+version: "3"
+services:
+  githook:
+    build:
+      context: .
+      dockerfile: ./Dockerfile_dev
+    container_name: githook
+    volumes: 
+      - /www:/app
+      - /etc/localtime:/etc/localtime
+      - /usr/bin/git:/usr/bin/git
+      - ~/.ssh:/home/${USER:-henry}/.ssh
+    working_dir: /app/githook
+    networks: 
+      - default
+    ports: 
+      - 8080:8000
+    environment: 
+      - GITHOOK_SMTP_PWD=${SMTP_PASSWORD}
+    command: uvicorn main:app --host 0.0.0.0 --reload
+    

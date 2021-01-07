@@ -1,0 +1,5 @@
+.vscode
+.gitignore
+.git
+logs
+*_local.py
