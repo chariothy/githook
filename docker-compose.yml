@@ -9,7 +9,7 @@ services:
       - /www:/app
       - /etc/localtime:/etc/localtime
       - /usr/bin/git:/usr/bin/git
-      - ~/.ssh:/home/${USER:-henry}/.ssh
+      - ~/.ssh:/home/${UNAME:-henry}/.ssh
     working_dir: /app/githook
     networks: 
       - default
