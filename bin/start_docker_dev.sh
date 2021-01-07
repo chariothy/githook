@@ -13,7 +13,7 @@ printf "| COMMAND        : $RUN\n"
 echo -------------------------------------------
 
 docker stop $CON_NAME && docker rm $CON_NAME
-docker build --build-arg UNAME=$(whoami) --build-arg UID=$(id -u) --build-arg GID=$(id -g) -t $IMG_NAME .
+docker build --build-arg UNAME=$(whoami) --build-arg UID=$(id -u) --build-arg GID=$(id -g) -f ../Dockerfile_dev -t $IMG_NAME ..
 
 # If successfully building docker image
 if [ $? -eq 0 ]; then
