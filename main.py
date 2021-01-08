@@ -32,7 +32,7 @@ def make_commands(payload):
         commands.append(f'cd {project_dir}')
         commands.append('git reset --hard HEAD')
         commands.append('git clean -f')
-        commands.append('git pull origin master')
+        commands.append('git pull --ff-only origin master')
         commands.append('git checkout master')
     return commands
 
@@ -42,7 +42,9 @@ def do_notify(payload, commands, result):
     docstring
     """
     rep = payload['repository']
-    pusher = payload['pusher']
+    pusher = payload.get('pusher')
+    if not pusher:
+        return 
     commits = payload['commits']
     project_full_name = rep['full_name']
     commit_comments = (x['message'] for x in commits)
@@ -64,6 +66,13 @@ def do_notify(payload, commands, result):
 async def git_push(req: Request):
     body = await req.body()
     payload = json.loads(body)
+
+    if 'repository' not in payload or 'pusher' not in payload:
+        return {
+            'result': 'error', 
+            'message': 'Not push event'
+        }
+
     commands = make_commands(payload)
     result = subprocess.run(' && '.join(commands), shell=True, capture_output=True)
 
