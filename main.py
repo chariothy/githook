@@ -53,7 +53,7 @@ def do_notify(payload, commands, result):
     notify(dict(
         pusher = pushed_by,
         rep_name = project_full_name,
-        result = 'OK' if result.returncode == 0 else 'ERROR',
+        result = '成功' if result.returncode == 0 else '失败',
         url = compare_url,
         commands = commands,
         comments = commit_comments,
@@ -75,6 +75,13 @@ async def git_push(req: Request):
 
     commands = make_commands(payload)
     result = subprocess.run(' && '.join(commands), shell=True, capture_output=True)
+    print('=' * 80)
+    print(result.args)
+    print('=' * 80)
+    print(result.stderr.decode('UTF-8'))
+    print('=' * 80)
+    print(result.stdout.decode('UTF-8'))
+    print('=' * 80)
 
     do_notify(payload, commands, result)
 

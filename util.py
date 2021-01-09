@@ -6,4 +6,3 @@ APP = AppTool('githook', os.getcwd())
 
 def now():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-

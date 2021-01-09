@@ -1,11 +1,15 @@
 import requests
 import json
 from util import APP
+import time
+import hmac
+import base64
+import hashlib
+import urllib.parse
 
 
-MAIL_SUBJECT = "[GITHOOK] {pusher}推送到项目{rep_name}，钩子结果：{result}"
-MAIL_BODY = """<h3>{pusher}推送到项目{rep_name}，钩子运行结果：{result}</h3>
-<p><a href="{url}">{url}</a></p>
+MAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
+MAIL_BODY = """<h3>{pusher}推送到项目<a href="{url}">{rep_name}</a>，钩子运行结果：{result}</h3>
 <h4>COMMITS：</h4>
 <ul>{comment_li}</ul>
 <h4>COMMANDS：</h4>
@@ -16,12 +20,7 @@ MAIL_BODY = """<h3>{pusher}推送到项目{rep_name}，钩子运行结果：{res
 <ul>{stderr_li}</ul>
 """
 
-DINGTAIL_BODY = """
-<p>
-"""
-
-
-def notifyByEmail(data):
+def notify_by_email(data):
     #APP.debug(f'邮件 数据===> {subject} ; {body}')
     subject = MAIL_SUBJECT.format(**data)
 
@@ -35,7 +34,6 @@ def notifyByEmail(data):
     data['stderr_li'] = stderr_li
     
     body = MAIL_BODY.format(**data)
-    print(subject, body)
     res = APP.send_email(subject, html_body=body)
     if res:
         APP.error(f'邮件推送失败：{res}')
@@ -43,46 +41,88 @@ def notifyByEmail(data):
         APP.debug(f'邮件发送成功，数据===> {subject}')
 
 
-def notifyByDingTail(config, data):
+def create_sign_for_dingtalk(secret: str):
+    """
+    docstring
+    """
+    timestamp = str(round(time.time() * 1000))
+    secret_enc = secret.encode('utf-8')
+    string_to_sign = '{}\n{}'.format(timestamp, secret)
+    string_to_sign_enc = string_to_sign.encode('utf-8')
+    hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
+    sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
+    print(timestamp)
+    print(sign)
+    return timestamp, sign
+
+
+DINGTALK_API_URL="https://oapi.dingtalk.com/robot/send?access_token={}"
+DINGTAIL_HEADERS = {'Content-Type': 'application/json'}
+
+def do_notify_by_ding_talk(config, data):
     """发消息给钉钉机器人
     """
     token = config['token']
-    if not token:
-        APP.error('没有钉钉token')
-        #p('APP.error: 没有钉钉token')
-        return
-    prefix = 'error_' if 'error' in data else ''
+    secret = config['secret']
+    
+    assert token and secret
+
+    url = DINGTALK_API_URL.format(token)
+    timestamp, sign = create_sign_for_dingtalk(secret)
+    url += f'&timestamp={timestamp}&sign={sign}'
+    
+    #APP.debug(f'钉钉机器人 数据===> {data}')
+    return requests.post(url=url, headers = DINGTAIL_HEADERS, data=json.dumps(data))
+
+
+DINGTAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
+DINGTAIL_BODY = """## {pusher}推送到项目[{rep_name}]({url})，钩子运行结果：{result}\n
+### <font color=blue>COMMITS：</font>\n
+{comment_li}\n
+### <font color=blue>COMMANDS：</font>\n
+{command_li}\n
+### <font color=blue>STDOUT：</font>\n
+{stdout_li}\n
+### <font color=blue>STDERR：</font>\n
+{stderr_li}
+"""
+
+
+def notify_by_ding_talk(config, data):
+    """发消息给钉钉机器人
+    """
+    comment_li = '\n'.join((f'- {c}' for c in data['comments']))
+    command_li = '\n'.join((f'- {c}' for c in data['commands']))
+    stdout_li = '\n'.join((f'- {c}' for c in data['stdout_list']))
+    stderr_li = '\n'.join((f'- {c}' for c in data['stderr_list']))
+    data['comment_li'] = comment_li
+    data['command_li'] = command_li
+    data['stdout_li'] = stdout_li
+    data['stderr_li'] = stderr_li
+
     data = {
-        "msgtype": "text",
-        "text": {
-            "content": config['keyword'] + config[prefix + 'message'].format(**data)
-        },
-        "at": config['at']
+        "msgtype": 'markdown',
+        "markdown": {
+            'title': DINGTAIL_SUBJECT.format(**data),
+            'text': DINGTAIL_BODY.format(**data)
+        }
     }
-    APP.debug(f'钉钉机器人 数据===> {data}')
-    #p('钉钉机器人===>', data)
-    res = requests.post(url="https://oapi.dingtalk.com/robot/send?access_token={}".format(token), \
-        headers = {'Content-Type': 'application/json'}, data=json.dumps(data))
-    #p('钉钉推送结果：', res.json())
+    res = do_notify_by_ding_talk(config, data)
     APP.debug(f'钉钉推送结果：{res.json()}')
 
 
-def notifyByServerChan(config, data):
+def notify_by_server_chan(config, data):
     prefix = 'error_' if 'error' in data else ''
     url = 'https://sc.ftqq.com/{sckey}.send'.format(**config)
     title = config[prefix + 'title'].format(**data)
     message = config[prefix + 'message'].format(**data)
     APP.debug(f'Server酱 数据===> {title} ; {message}')
-    #p('Server酱===>', title, '; ', message)
-    if not CONFIG['dry']:
-        res = requests.get(url, params={'text': title, 'desp': message})
-        #p('Server酱推送结果：', res.json())
-        APP.debug(f'Server酱推送结果：{res.json()}')
+    res = requests.get(url, params={'text': title, 'desp': message})
+    APP.debug(f'Server酱推送结果：{res.json()}')
 
 
 def notify(data):
-    notifyConfig = APP['notify']
-    if 'mail' in notifyConfig:
-        notifyByEmail(data)
-    if 'dingtalk' in notifyConfig:
-        notifyByDingTail(APP['dingtalk'], data)
+    if str(APP['notify.mail']) == '1':
+        notify_by_email(data)
+    if str(APP['notify.dingtalk']) == '1':
+        notify_by_ding_talk(APP['dingtalk'], data)
