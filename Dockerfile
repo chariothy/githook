@@ -28,20 +28,38 @@ ARG GID=1000
 
 EXPOSE 8000
 
+ENV HOST=0.0.0.0
+
+ENV GITHOOK_MAIL_FROM="Henry TIAN <chariothy@gmail.com>"
+ENV GITHOOK_MAIL_TO="Henry TIAN <chariothy@gmail.com>"
+
+ENV GITHOOK_SMTP_HOST=smtp.gmail.com
+ENV GITHOOK_SMTP_PORT=25
+ENV GITHOOK_SMTP_USER=chariothy@gmail.com
 ENV GITHOOK_SMTP_PWD=password
 
-VOLUME [ "/etc/localtime", "/usr/bin/git", "/home/$UNAME/.ssh"]  /etc/localtime
+ENV GITHOOK_PROJECT_BASE_DIR=/app
+
+ENV GITHOOK_NOTIFY_MAIL=1
+ENV GITHOOK_NOTIFY_DINGTALK=1
+
+ENV GITHOOK_DINGTALK_TOKEN=DINGTALK_BOT_TOKEN
+ENV GITHOOK_DINGTALK_SECRET=DINGTALK_BOT_SECRET
+
 COPY ./requirements.txt .
 
-RUN pip install -U pip \
+RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo 'Asia/Shanghai' > /etc/timezone \
+  && pip install -U pip \
   && pip install --no-cache-dir -r ./requirements.txt \
   && groupadd -g $GID -o $UNAME \
   && useradd -m -u $UID -g $GID -o -s /bin/bash $UNAME \
   && usermod -G root $UNAME
+  
 USER $UNAME
 
-WORKDIR /app
+WORKDIR /app/githook
 
 COPY . .
 
-CMD [ "uvicorn", "main:app", "--host 0.0.0.0", "--reload" ]
+CMD [ "uvicorn", "main:app", "--host ${HOST}" ]
