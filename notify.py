@@ -9,7 +9,7 @@ import urllib.parse
 
 
 MAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
-MAIL_BODY = """<h3>{pusher}推送项目<a href="{url}">{rep_name}</a>，钩子运行结果：{result}</h3>
+MAIL_BODY = """<h3>{pusher}推送项目<a href="{url}">{rep_name}</a>，钩子运行{result}</h3>
 <h4>COMMITS：</h4>
 <ul>{comment_li}</ul>
 <h4>COMMANDS：</h4>
@@ -24,14 +24,10 @@ def notify_by_email(data):
     #APP.debug(f'邮件 数据===> {subject} ; {body}')
     subject = MAIL_SUBJECT.format(**data)
 
-    comment_li = ''.join((f'<li>{c}</li>' for c in data['comments']))
-    command_li = ''.join((f'<li>{c}</li>' for c in data['commands']))
-    stdout_li = ''.join((f'<li>{c}</li>' for c in data['stdout_list']))
-    stderr_li = ''.join((f'<li>{c}</li>' for c in data['stderr_list']))
-    data['comment_li'] = comment_li
-    data['command_li'] = command_li
-    data['stdout_li'] = stdout_li
-    data['stderr_li'] = stderr_li
+    data['comment_li'] = ''.join((f'<li>{c}</li>' for c in data['comments']))
+    data['command_li'] = ''.join((f'<li>{c}</li>' for c in data['commands']))
+    data['stdout_li'] = ''.join((f'<li>{c}</li>' for c in data['stdout_list']))
+    data['stderr_li'] = ''.join((f'<li>{c}</li>' for c in data['stderr_list']))
     
     body = MAIL_BODY.format(**data)
     res = APP.send_email(subject, html_body=body)
@@ -51,8 +47,6 @@ def create_sign_for_dingtalk(secret: str):
     string_to_sign_enc = string_to_sign.encode('utf-8')
     hmac_code = hmac.new(secret_enc, string_to_sign_enc, digestmod=hashlib.sha256).digest()
     sign = urllib.parse.quote_plus(base64.b64encode(hmac_code))
-    print(timestamp)
-    print(sign)
     return timestamp, sign
 
 
@@ -91,14 +85,10 @@ DINGTAIL_BODY = """## {pusher}推送项目[{rep_name}]({url}){result}\n
 def notify_by_ding_talk(config, data):
     """发消息给钉钉机器人
     """
-    comment_li = '\n'.join((f'- {c}' for c in data['comments']))
-    command_li = '\n'.join((f'- {c}' for c in data['commands']))
-    stdout_li = '\n'.join((f'- {c}' for c in data['stdout_list']))
-    stderr_li = '\n'.join((f'- {c}' for c in data['stderr_list']))
-    data['comment_li'] = comment_li
-    data['command_li'] = command_li
-    data['stdout_li'] = stdout_li
-    data['stderr_li'] = stderr_li
+    data['comment_li'] = '\n'.join((f'- {c}' for c in data['comments']))
+    data['command_li'] = '\n'.join((f'- {c}' for c in data['commands']))
+    data['stdout_li'] = '\n'.join((f'- {c}' for c in data['stdout_list']))
+    data['stderr_li'] = '\n'.join((f'- {c}' for c in data['stderr_list']))
 
     data = {
         "msgtype": 'markdown',
@@ -107,6 +97,7 @@ def notify_by_ding_talk(config, data):
             'text': DINGTAIL_BODY.format(**data)
         }
     }
+    print(data)
     res = do_notify_by_ding_talk(config, data)
     APP.debug(f'钉钉推送结果：{res.json()}')
 
