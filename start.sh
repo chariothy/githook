@@ -1,8 +1,8 @@
 #! /bin/bash
+SERVICE=githook
 
 command -v docker-compose
 if [ $? -eq 0 ]; then
-
     echo -------------------------------------------
     printf "|         !!! DEBUG mode !!!\n"
 
@@ -16,7 +16,7 @@ if [ $? -eq 0 ]; then
     docker-compose build \
         --build-arg UNAME=$(whoami) \
         --build-arg UID=$(id -u) \
-        --build-arg GID=$(id -g) \
+        --build-arg GID=$(id -g) $SERVICE \
     && $DC_COMMAND
 
     if [ "$DEBUG" == "0" ]; then
