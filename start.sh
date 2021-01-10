@@ -13,6 +13,7 @@ if [ $? -eq 0 ]; then
     fi
     printf "| Command           : $DC_COMMAND\n"
     echo -------------------------------------------
+    docker-compose down
     docker-compose build \
         --build-arg UNAME=$(whoami) \
         --build-arg UID=$(id -u) \
