@@ -93,3 +93,8 @@ async def git_push(req: Request):
     }
 
 #TODO: 1. notify dingtalk 2. show commit files
+
+if __name__ == "__main__":
+    import uvicorn, os
+    reload = os.environ.get('GITHOOK_RELOAD', '0') == '1'
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=reload)

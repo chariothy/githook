@@ -4,24 +4,6 @@
 FROM python:3.8
 LABEL maintainer="chariothy@gmail.com"
 
-ARG BUILD_DATE
-ARG VCS_REF
-ARG VERSION
-
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
-
-LABEL maintainer="chariothy" \
-  org.opencontainers.image.created=$BUILD_DATE \
-  org.opencontainers.image.url="https://github.com/chariothy/githook.git" \
-  org.opencontainers.image.source="https://github.com/chariothy/githook.git" \
-  org.opencontainers.image.version=$VERSION \
-  org.opencontainers.image.revision=$VCS_REF \
-  org.opencontainers.image.vendor="chariothy" \
-  org.opencontainers.image.title="githook" \
-  org.opencontainers.image.description="Githook" \
-  org.opencontainers.image.licenses="MIT"
-
 ARG UNAME=henry
 ARG UID=1000
 ARG GID=1000
@@ -46,6 +28,8 @@ ENV GITHOOK_NOTIFY_DINGTALK=1
 ENV GITHOOK_DINGTALK_TOKEN=DINGTALK_BOT_TOKEN
 ENV GITHOOK_DINGTALK_SECRET=DINGTALK_BOT_SECRET
 
+ENV GITHOOK_RELOAD=0
+
 COPY ./requirements.txt .
 
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -60,6 +44,4 @@ USER $UNAME
 
 WORKDIR /app/githook
 
-COPY . .
-
-CMD [ "uvicorn", "main:app", "--host ${HOST}" ]
+CMD [ "python", "main.py" ]

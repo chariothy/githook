@@ -1,7 +1,7 @@
 version: "3"
 services:
   githook:
-    image: chariothy/githook
+    build: .
     container_name: githook
     volumes: 
       - ${PROJ_ROOT:-/www}:/app
@@ -24,5 +24,6 @@ services:
       - GITHOOK_NOTIFY_DINGTALK=1
       - GITHOOK_DINGTALK_TOKEN=${DINGTALK_TOKEN}
       - GITHOOK_DINGTALK_SECRET=${DINGTALK_SECRET}
-    command: "uvicorn main:app --host 0.0.0.0"
+      - GITHOOK_RELOAD=${DEBUG}
+    command: python main.py
     

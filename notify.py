@@ -9,7 +9,7 @@ import urllib.parse
 
 
 MAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
-MAIL_BODY = """<h3>{pusher}推送到项目<a href="{url}">{rep_name}</a>，钩子运行结果：{result}</h3>
+MAIL_BODY = """<h3>{pusher}推送项目<a href="{url}">{rep_name}</a>，钩子运行结果：{result}</h3>
 <h4>COMMITS：</h4>
 <ul>{comment_li}</ul>
 <h4>COMMANDS：</h4>
@@ -76,7 +76,7 @@ def do_notify_by_ding_talk(config, data):
 
 
 DINGTAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
-DINGTAIL_BODY = """## {pusher}推送到项目[{rep_name}]({url})，钩子运行结果：{result}\n
+DINGTAIL_BODY = """## {pusher}推送项目[{rep_name}]({url}){result}\n
 ### <font color=blue>COMMITS：</font>\n
 {comment_li}\n
 ### <font color=blue>COMMANDS：</font>\n
