@@ -4,10 +4,10 @@ SERVICE=githook
 command -v docker-compose
 if [ $? -eq 0 ]; then
     echo -------------------------------------------
-    printf "|         !!! DEBUG mode !!!\n"
 
     if [ "$DEBUG" == "1" ]; then
         DC_COMMAND="docker-compose up"
+        printf "|         !!! DEBUG mode !!!\n"
     else
         DC_COMMAND="docker-compose up -d"
     fi
@@ -20,7 +20,7 @@ if [ $? -eq 0 ]; then
         --build-arg GID=$(id -g) $SERVICE \
     && $DC_COMMAND
 
-    if [ "$DEBUG" == "0" ]; then
+    if [ "$DEBUG" != "1" ]; then
         docker-compose logs -f --tail=10
     fi
 else
