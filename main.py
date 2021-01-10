@@ -56,7 +56,7 @@ def do_notify(payload, commands, result):
         result = '成功' if result.returncode == 0 else '失败',
         url = compare_url,
         commands = commands,
-        comments = commit_comments,
+        comments = list(commit_comments),
         stdout_list = result.stdout.decode('UTF-8').strip('\n').split('\n'),
         stderr_list = result.stderr.decode('UTF-8').strip('\n').split('\n')
     ))

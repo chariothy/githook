@@ -21,15 +21,16 @@ MAIL_BODY = """<h3>{pusher}推送项目<a href="{url}">{rep_name}</a>，钩子�
 """
 
 def notify_by_email(data):
+    mail_data = data.copy()
     #APP.debug(f'邮件 数据===> {subject} ; {body}')
     subject = MAIL_SUBJECT.format(**data)
 
-    data['comment_li'] = ''.join((f'<li>{c}</li>' for c in data['comments']))
-    data['command_li'] = ''.join((f'<li>{c}</li>' for c in data['commands']))
-    data['stdout_li'] = ''.join((f'<li>{c}</li>' for c in data['stdout_list']))
-    data['stderr_li'] = ''.join((f'<li>{c}</li>' for c in data['stderr_list']))
+    mail_data['comment_li'] = ''.join((f'<li>{c}</li>' for c in data['comments']))
+    mail_data['command_li'] = ''.join((f'<li>{c}</li>' for c in data['commands']))
+    mail_data['stdout_li'] = ''.join((f'<li>{c}</li>' for c in data['stdout_list']))
+    mail_data['stderr_li'] = ''.join((f'<li>{c}</li>' for c in data['stderr_list']))
     
-    body = MAIL_BODY.format(**data)
+    body = MAIL_BODY.format(**mail_data)
     res = APP.send_email(subject, html_body=body)
     if res:
         APP.error(f'邮件推送失败：{res}')
@@ -71,13 +72,13 @@ def do_notify_by_ding_talk(config, data):
 
 DINGTAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
 DINGTAIL_BODY = """## {pusher}推送项目[{rep_name}]({url}){result}\n
-### <font color=blue>COMMITS：</font>\n
+### <font color=red>COMMITS：</font>\n
 {comment_li}\n
-### <font color=blue>COMMANDS：</font>\n
+### <font color=red>COMMANDS：</font>\n
 {command_li}\n
-### <font color=blue>STDOUT：</font>\n
+### <font color=red>STDOUT：</font>\n
 {stdout_li}\n
-### <font color=blue>STDERR：</font>\n
+### <font color=red>STDERR：</font>\n
 {stderr_li}
 """
 
@@ -85,20 +86,20 @@ DINGTAIL_BODY = """## {pusher}推送项目[{rep_name}]({url}){result}\n
 def notify_by_ding_talk(config, data):
     """发消息给钉钉机器人
     """
-    data['comment_li'] = '\n'.join((f'- {c}' for c in data['comments']))
-    data['command_li'] = '\n'.join((f'- {c}' for c in data['commands']))
-    data['stdout_li'] = '\n'.join((f'- {c}' for c in data['stdout_list']))
-    data['stderr_li'] = '\n'.join((f'- {c}' for c in data['stderr_list']))
+    dt_data = data.copy()
+    dt_data['comment_li'] = '\n'.join((f'- {c}' for c in data['comments']))
+    dt_data['command_li'] = '\n'.join((f'- {c}' for c in data['commands']))
+    dt_data['stdout_li'] = '\n'.join((f'- {c}' for c in data['stdout_list']))
+    dt_data['stderr_li'] = '\n'.join((f'- {c}' for c in data['stderr_list']))
 
-    data = {
+    dt_msg = {
         "msgtype": 'markdown',
         "markdown": {
-            'title': DINGTAIL_SUBJECT.format(**data),
-            'text': DINGTAIL_BODY.format(**data)
+            'title': DINGTAIL_SUBJECT.format(**dt_data),
+            'text': DINGTAIL_BODY.format(**dt_data)
         }
     }
-    print(data)
-    res = do_notify_by_ding_talk(config, data)
+    res = do_notify_by_ding_talk(config, dt_msg)
     APP.debug(f'钉钉推送结果：{res.json()}')
 
 
