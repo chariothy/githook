@@ -3,7 +3,6 @@ from fastapi import FastAPI, Request
 
 import json, os, subprocess
 from os import path
-from chariothy_common import AppTool
 from util import APP
 from notify import notify
 

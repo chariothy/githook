@@ -1,4 +1,4 @@
-from chariothy_common import AppTool
+from pybeans import AppTool
 import os, sys, shutil, time
 
 

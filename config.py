@@ -1,7 +1,13 @@
 CONFIG = {
     'log': {
         'level': 'DEBUG',
-        'dest': ['stdout', 'file', 'mail']
+        'dest': {
+            'stdout': 1, 
+            'file': 0, 
+            'mail': 1       # 0     - 不使用； 
+                            # 1     - 使用，收件人使用mail中设置的to；
+                            # 字符串 - 直接指定收件人， Ex. : 'Henry TIAN <chariothy@gmail.com>'
+        }
     },
     'mail': {
         'from': "Henry TIAN <chariothy@gmail.com>",
