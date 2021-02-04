@@ -34,11 +34,18 @@ docker_up()
 {
     if [ "$GITHOOK_ENV" == "prod" ]; then
         docker-compose down
-        docker-compose up -d && docker-compose logs -f --tail=10
+        docker-compose up -d \
+        && docker-compose logs -f --tail=10
     else
+        docker-compose build \
+            --build-arg UNAME=$(whoami) \
+            --build-arg UID=$(id -u) \
+            --build-arg GID=$(id -g)
+        
         echo ===============================================
         echo -e "\033[5;34m!!!!!!!!!!!! Running in DEBUG mode !!!!!!!!!!!!\033[0m"
         echo ===============================================
+        
         docker-compose up
     fi
 }
@@ -49,8 +56,4 @@ if [[ -z $SMTP_PWD || -z $DINGTALK_TOKEN || -z $DINGTALK_SECRET ]];then
     exit 1
 fi
 
-docker-compose build \
-    --build-arg UNAME=$(whoami) \
-    --build-arg UID=$(id -u) \
-    --build-arg GID=$(id -g) $SERVICE \
-&& docker_up
+docker_up
