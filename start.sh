@@ -29,6 +29,13 @@ usage()
     echo ================================================================================
 }
 
+warn_debug() 
+{
+    echo ===============================================
+    echo -e "\033[5;34m!!!!!!!!!!!! Running in DEBUG mode !!!!!!!!!!!!\033[0m"
+    echo ===============================================
+}
+
 docker_up()
 # 做成函数是为了能够在 Docker Build 输出之后显示warning
 {
@@ -40,13 +47,9 @@ docker_up()
         docker-compose build \
             --build-arg UNAME=$(whoami) \
             --build-arg UID=$(id -u) \
-            --build-arg GID=$(id -g)
-        
-        echo ===============================================
-        echo -e "\033[5;34m!!!!!!!!!!!! Running in DEBUG mode !!!!!!!!!!!!\033[0m"
-        echo ===============================================
-        
-        docker-compose up
+            --build-arg GID=$(id -g) \
+        && warn_debug \
+        && docker-compose up
     fi
 }
 
