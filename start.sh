@@ -36,27 +36,21 @@ warn_debug()
     echo ===============================================
 }
 
-docker_up()
-# 做成函数是为了能够在 Docker Build 输出之后显示warning
-{
-    if [ "$GITHOOK_ENV" == "prod" ]; then
-        docker-compose down
-        docker-compose up -d \
-        && docker-compose logs -f --tail=10
-    else
-        docker-compose build \
-            --build-arg UNAME=$(whoami) \
-            --build-arg UID=$(id -u) \
-            --build-arg GID=$(id -g) \
-        && warn_debug \
-        && docker-compose up
-    fi
-}
-
 usage
 
 if [[ -z $SMTP_PWD || -z $DINGTALK_TOKEN || -z $DINGTALK_SECRET ]];then
     exit 1
 fi
 
-docker_up
+if [ "$GITHOOK_ENV" == "prod" ]; then
+        docker-compose down
+        docker-compose up -d \
+    &&  docker-compose logs -f --tail=10
+else
+        docker-compose build \
+            --build-arg UNAME=$(whoami) \
+            --build-arg UID=$(id -u) \
+            --build-arg GID=$(id -g) \
+    &&  warn_debug \
+    &&  docker-compose up
+fi
