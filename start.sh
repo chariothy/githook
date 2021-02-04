@@ -27,45 +27,30 @@ usage()
     dump 'DINGTALK_TOKEN'
     dump 'DINGTALK_SECRET'
     echo ================================================================================
-
-exit
 }
 
-if [ -z $SMTP_PWD ];then
-    usage
-fi
-
-if [ -z $DINGTALK_TOKEN ];then
-    usage
-fi
-
-if [ -z $DINGTALK_SECRET ];then
-    usage
-fi
-
-command -v docker-compose
-if [ $? -eq 0 ]; then
-    echo -------------------------------------------
-
-    if [ "$DEBUG" == "1" ]; then
-        DC_COMMAND="docker-compose up"
-        printf "|         !!! DEBUG mode !!!\n"
+docker_up()
+# 做成函数是为了能够在 Docker Build 输出之后显示warning
+{
+    if [ "$GITHOOK_ENV" == "prod" ]; then
+        docker-compose down
+        docker-compose up -d && docker-compose logs -f --tail=10
     else
-        DC_COMMAND="docker-compose up -d"
+        echo ===============================================
+        echo -e "\033[5;34m!!!!!!!!!!!! Running in DEBUG mode !!!!!!!!!!!!\033[0m"
+        echo ===============================================
+        docker-compose up
     fi
-    printf "| Command           : $DC_COMMAND\n"
-    echo -------------------------------------------
-    docker-compose down
-    docker-compose build \
-        --build-arg UNAME=$(whoami) \
-        --build-arg UID=$(id -u) \
-        --build-arg GID=$(id -g) $SERVICE \
-    && $DC_COMMAND
+}
 
-    if [ "$DEBUG" != "1" ]; then
-        docker-compose logs -f --tail=10
-    fi
-else
-    pip3 install -r ./requirements.txt
-    python3 main.py
+usage
+
+if [[ -z $SMTP_PWD || -z $DINGTALK_TOKEN || -z $DINGTALK_SECRET ]];then
+    exit 1
 fi
+
+docker-compose build \
+    --build-arg UNAME=$(whoami) \
+    --build-arg UID=$(id -u) \
+    --build-arg GID=$(id -g) $SERVICE \
+&& docker_up

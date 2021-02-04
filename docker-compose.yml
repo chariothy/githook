@@ -12,6 +12,7 @@ services:
       - default
     ports: 
       - ${PORT:-8000}:8000
+    restart: unless-stopped
     environment: 
       - GITHOOK_MAIL_FROM=${MAIL_FROM:-"Henry TIAN <chariothy@gmail.com>"}
       - GITHOOK_MAIL_TO=${MAIL_TO:-"Henry TIAN <chariothy@gmail.com>"}
