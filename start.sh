@@ -42,7 +42,7 @@ if [[ -z $SMTP_PWD || -z $DINGTALK_TOKEN || -z $DINGTALK_SECRET ]];then
     exit 1
 fi
 
-if [ "$GITHOOK_ENV" == "prod" ]; then
+if [ "$ENV" == "prod" ]; then
         docker-compose down
         docker-compose up -d \
     &&  docker-compose logs -f --tail=10
