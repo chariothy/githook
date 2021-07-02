@@ -39,7 +39,7 @@ def make_commands(payload):
         commands.append('git reset --hard HEAD')
         commands.append('git clean -f')
         commands.append(f'git pull --ff-only origin {main_branch}')
-        commands.append('git checkout {main_branch}')
+        commands.append(f'git checkout {main_branch}')
     return commands
 
 
