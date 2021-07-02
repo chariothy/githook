@@ -1,5 +1,6 @@
 # by henry
 .vscode
+.history
 *_local.py
 
 

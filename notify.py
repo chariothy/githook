@@ -114,7 +114,7 @@ def notify_by_server_chan(config, data):
 
 
 def notify(data):
-    if str(APP['notify.mail']) == '1':
+    if APP['notify.mail'] == 1:
         notify_by_email(data)
-    if str(APP['notify.dingtalk']) == '1':
+    if APP['notify.dingtalk'] == 1:
         notify_by_ding_talk(APP['dingtalk'], data)
