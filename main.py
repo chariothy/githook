@@ -1,13 +1,13 @@
 from typing import Optional
 from fastapi import FastAPI, Request
 
-import json, os, subprocess
+import json, os, subprocess, re
 from os import path
 from util import APP
 from notify import notify
 
 app = FastAPI()
-
+REG_MAIN_BRANCH = re.compile(r'\* (\w+)')
 
 def make_commands(payload):
     """
@@ -28,11 +28,18 @@ def make_commands(payload):
         commands.append(f'cd {project_base_dir}')
         commands.append(f'git clone {ssh_url}')
     else:
+        result = subprocess.run(f'cd {project_dir} && git branch', shell=True, capture_output=True)
+        output = result.stdout.decode('UTF-8')
+        main_branch = ''
+        for branch in output.split('\n'):
+            if 0 == branch.find('*'):
+                main_branch = REG_MAIN_BRANCH.match(branch).groups[0]
+                break
         commands.append(f'cd {project_dir}')
         commands.append('git reset --hard HEAD')
         commands.append('git clean -f')
-        commands.append('git pull --ff-only origin master')
-        commands.append('git checkout master')
+        commands.append(f'git pull --ff-only origin {main_branch}')
+        commands.append('git checkout {main_branch}')
     return commands
 
 

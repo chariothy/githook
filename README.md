@@ -49,3 +49,4 @@ docker run --name ${CON_NAME:-githook} \
 ## TODO
 
 - 支持更多的git托管网站
+- 拉取成功后运行命令，如docker 
