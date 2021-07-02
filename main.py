@@ -33,7 +33,7 @@ def make_commands(payload):
         main_branch = ''
         for branch in output.split('\n'):
             if 0 == branch.find('*'):
-                main_branch = REG_MAIN_BRANCH.match(branch).groups[0]
+                main_branch = REG_MAIN_BRANCH.match(branch).groups()[0]
                 break
         commands.append(f'cd {project_dir}')
         commands.append('git reset --hard HEAD')
