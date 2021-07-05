@@ -102,5 +102,5 @@ async def git_push(req: Request):
 
 if __name__ == "__main__":
     import uvicorn, os
-    reload = os.environ.get('GITHOOK_ENV') != 'prod'
+    reload = os.environ.get('UVICORN_ENV') != 'prod'
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=reload)

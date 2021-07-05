@@ -25,5 +25,5 @@ services:
       - GITHOOK_NOTIFY_DINGTALK=1
       - GITHOOK_DINGTALK_TOKEN=${DINGTALK_TOKEN}
       - GITHOOK_DINGTALK_SECRET=${DINGTALK_SECRET}
-      - GITHOOK_ENV=${ENV}
+      - UVICORN_ENV=${UVICORN_ENV}
     command: python main.py
