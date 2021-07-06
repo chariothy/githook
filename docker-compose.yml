@@ -13,6 +13,9 @@ services:
     ports: 
       - ${PORT:-8000}:8000
     restart: always
+    logging:
+      options:
+        max-size: "10m"
     environment: 
       - GITHOOK_MAIL_FROM=${MAIL_FROM:-"Henry TIAN <chariothy@gmail.com>"}
       - GITHOOK_MAIL_TO=${MAIL_TO:-"Henry TIAN <chariothy@gmail.com>"}
