@@ -6,6 +6,7 @@ from os import path
 from util import APP
 from notify import notify
 
+ENV = os.environ.get('ENV', 'dev')
 app = FastAPI()
 REG_MAIN_BRANCH = re.compile(r'\* (\w+)')
 
@@ -102,5 +103,5 @@ async def git_push(req: Request):
 
 if __name__ == "__main__":
     import uvicorn, os
-    reload = os.environ.get('ENV') != 'prod'
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=reload)
+    print(f'Listening ++++++ ENV={ENV} ++++++')
+    uvicorn.run("main:app", host="0.0.0.0", port=APP['port'], reload=(ENV != 'prod'))

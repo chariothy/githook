@@ -11,7 +11,7 @@ services:
     networks: 
       - default
     ports: 
-      - ${PORT:-8000}:8000
+      - ${GITHOOK_PORT:-8000}:8000
     restart: always
     logging:
       options:
