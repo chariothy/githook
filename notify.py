@@ -72,13 +72,13 @@ def do_notify_by_ding_talk(config, data):
 
 DINGTAIL_SUBJECT = "[GITHOOK] {pusher}推送项目{rep_name}{result}"
 DINGTAIL_BODY = """## {pusher}推送项目[{rep_name}]({url}){result}\n
-### <font color=red>COMMITS：</font>\n
+### <font color=#000080>COMMITS：</font>\n
 {comment_li}\n
-### <font color=red>COMMANDS：</font>\n
+### <font color=#6A65FF>COMMANDS：</font>\n
 {command_li}\n
-### <font color=red>STDOUT：</font>\n
+### <font color=#4169e1>STDOUT：</font>\n
 {stdout_li}\n
-### <font color=red>STDERR：</font>\n
+### <font color=#ff0000>STDERR：</font>\n
 {stderr_li}
 """
 
