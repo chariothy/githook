@@ -99,6 +99,15 @@ async def git_push(req: Request):
         'stderr': result.stderr
     }
 
+
+@app.get('/push')
+async def test_push(req: Request):
+    print('=' * 80, 'test push', '=' * 80)
+
+    return {
+        'result': 'success'
+    }
+
 #TODO: 1. notify dingtalk 2. show commit files
 
 if __name__ == "__main__":

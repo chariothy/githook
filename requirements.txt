@@ -1,4 +1,4 @@
 fastapi
 uvicorn[standard]
 requests
-pybeans
+pybeans>=1.7.0
