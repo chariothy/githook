@@ -13,6 +13,7 @@ services:
     ports: 
       - ${GITHOOK_PORT:-8000}:8000
     restart: always
+    userns_mode: "host"
     logging:
       options:
         max-size: "10m"
