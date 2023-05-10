@@ -5,8 +5,8 @@ services:
     container_name: githook
     volumes: 
       - ${PROJ_ROOT:-/www}:/app
-      - /usr/bin/git:/usr/bin/git
-      - ~/.ssh:/home/${UNAME}/.ssh
+      - /usr/bin/git:/usr/bin/git:ro
+      - ~/.ssh:/home/${UNAME}/.ssh:ro
     working_dir: /app/githook
     networks: 
       - default
