@@ -5,14 +5,15 @@ services:
     container_name: githook
     volumes: 
       - ${PROJ_ROOT:-/www}:/app
-      - /usr/bin/git:/usr/bin/git
-      - ~/.ssh:/home/${UNAME}/.ssh
+      - /usr/bin/git:/usr/bin/git:ro
+      - ~/.ssh:/home/${UNAME}/.ssh:ro
     working_dir: /app/githook
     networks: 
       - default
     ports: 
       - ${GITHOOK_PORT:-8000}:8000
     restart: always
+    userns_mode: "host"
     logging:
       options:
         max-size: "10m"
