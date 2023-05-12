@@ -2,12 +2,15 @@ CONFIG = {
     'log': {
         'level': 'DEBUG',
         'dest': {
-            'stdout': 1, 
-            'file': 0, 
-            'mail': 1       # 0     - 不使用； 
-                            # 1     - 使用，收件人使用mail中设置的to；
-                            # 字符串 - 直接指定收件人， Ex. : 'Henry TIAN <chariothy@gmail.com>'
-        }
+            'stdout': True, # None: disabled,
+            'file': None,   # None: disabled, 
+                                        # PATH: log file path, 
+                                        # '': Default path under ./logs/
+            'syslog': ('10.8.0.2', 514),    # None: disabled, or (ip, port)
+            'mail': 'Henry TIAN <6314849@qq.com>'   # None: disabled,
+                                                    # MAIL: send to
+                                                    # '': use setting ['mail']['to']
+        },
     },
     'mail': {
         'from': "Henry TIAN <chariothy@gmail.com>",
