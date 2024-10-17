@@ -1,7 +1,7 @@
 # For githook project
 # @version 1.0
 
-FROM python:latest
+FROM python:3.10
 LABEL maintainer="chariothy@gmail.com"
 
 ARG UNAME=henry
