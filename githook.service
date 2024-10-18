@@ -1,0 +1,13 @@
+[Unit]
+Description=Githook Service
+After=network.target
+
+[Service]
+User=henry
+Group=www-data
+WorkingDirectory=/www/Githook
+ExecStart=/home/henry/miniconda3/envs/githook/bin/python main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
