@@ -25,7 +25,7 @@ CONFIG = {
     },
     'project_base_dir': '/www',
     'notify': {                         # 通知方式，会对列表中列出的方式进去通知，列表为空则不做任何通知
-        'mail': 1,                         # 通过邮件方式通知，需要配置'mail'和'smtp'
+        'mail': 0,                         # 通过邮件方式通知，需要配置'mail'和'smtp'
         'dingtalk': 1                      # 通过钉钉机器人[http://dwz.win/MqK]通知，需要配置'dingtalk'
     },
     'dingtalk': {                       # 通过钉钉机器人发送通知，具体请见钉钉机器人文档
