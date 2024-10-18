@@ -5,7 +5,7 @@ After=network.target
 [Service]
 User=henry
 Group=www-data
-WorkingDirectory=/www/Githook
+WorkingDirectory=/www/githook
 ExecStart=/home/henry/miniconda3/envs/githook/bin/python main.py
 Restart=always
 
