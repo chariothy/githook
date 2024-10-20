@@ -103,16 +103,6 @@ def notify_by_ding_talk(config, data):
     APP.debug(f'钉钉推送结果：{res.json()}')
 
 
-def notify_by_server_chan(config, data):
-    prefix = 'error_' if 'error' in data else ''
-    url = 'https://sc.ftqq.com/{sckey}.send'.format(**config)
-    title = config[prefix + 'title'].format(**data)
-    message = config[prefix + 'message'].format(**data)
-    APP.debug(f'Server酱 数据===> {title} ; {message}')
-    res = requests.get(url, params={'text': title, 'desp': message})
-    APP.debug(f'Server酱推送结果：{res.json()}')
-
-
 def notify(data):
     if APP['notify.mail'] == 1:
         notify_by_email(data)

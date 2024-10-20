@@ -57,16 +57,25 @@ def do_notify(payload, commands, result):
     commit_comments = (x['message'] for x in commits)
     pushed_by = pusher['name']
     compare_url = payload['compare']
-    notify(dict(
-        pusher = pushed_by,
-        rep_name = project_full_name,
-        result = '成功' if result.returncode == 0 else '失败',
-        url = compare_url,
-        commands = commands,
-        comments = list(commit_comments),
-        stdout_list = result.stdout.decode('UTF-8').strip('\n').split('\n'),
-        stderr_list = result.stderr.decode('UTF-8').strip('\n').split('\n')
-    ))
+    
+    comment_li = '\n'.join((f'- {c}' for c in commit_comments))
+    command_li = '\n'.join((f'- {c}' for c in commands))
+    stdout_li = '\n'.join((f'- {c}' for c in result.stdout.decode('UTF-8').strip('\n').split('\n')))
+    stderr_li = '\n'.join((f'- {c}' for c in result.stderr.decode('UTF-8').strip('\n').split('\n')))
+    success = '成功' if result.returncode == 0 else '失败'
+    
+    title = f"[GITHOOK] {pushed_by}推送项目{project_full_name}{success}"
+    text = f"""## {pushed_by}推送项目[{project_full_name}]({compare_url}){success}\n
+### <font color=#000080>COMMITS：</font>\n
+{comment_li}\n
+### <font color=#6A65FF>COMMANDS：</font>\n
+{command_li}\n
+### <font color=#4169e1>STDOUT：</font>\n
+{stdout_li}\n
+### <font color=#ff0000>STDERR：</font>\n
+{stderr_li}
+"""
+    APP.ding(title, text)
 
 
 @app.post('/push')
