@@ -64,15 +64,15 @@ def do_notify(payload, commands, result):
     stderr_li = '\n'.join((f'- {c}' for c in result.stderr.decode('UTF-8').strip('\n').split('\n')))
     success = '成功' if result.returncode == 0 else '失败'
     
-    title = f"[GITHOOK] {pushed_by}推送项目{project_full_name}{success}"
-    text = f"""## {pushed_by}推送项目[{project_full_name}]({compare_url}){success}\n
-### <font color=#000080>COMMITS：</font>\n
+    title = f"{pushed_by}推送项目{project_full_name}{success}"
+    text = f"""### Link: [{project_full_name}]({compare_url}){success}\n
+#### <font color=#000080>COMMITS：</font>\n
 {comment_li}\n
-### <font color=#6A65FF>COMMANDS：</font>\n
+#### <font color=#6A65FF>COMMANDS：</font>\n
 {command_li}\n
-### <font color=#4169e1>STDOUT：</font>\n
+#### <font color=#4169e1>STDOUT：</font>\n
 {stdout_li}\n
-### <font color=#ff0000>STDERR：</font>\n
+#### <font color=#ff0000>STDERR：</font>\n
 {stderr_li}
 """
     APP.ding(title, text)
