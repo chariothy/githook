@@ -1,7 +1,7 @@
 from os import environ as env
 CONFIG = {
     'log': {
-        'level': env.get('PY_ENV', 'DEBUG'),
+        'level': env.get('LOG_LEVEL', 'DEBUG'),
         'dest': {
             'stdout': True, # None: disabled,
             'file': '',   # None: disabled, 
