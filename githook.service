@@ -6,7 +6,8 @@ After=network.target
 User=henry
 Group=www-data
 WorkingDirectory=/www/githook
-Environment="ENV=prod;GITHOOK=/home/henry/miniconda3/envs/githook/bin"
+Environment="ENV=prod"
+Environment="GITHOOK=/home/henry/miniconda3/envs/githook/bin"
 ExecStart=$GITHOOK/python main.py
 Restart=always
 
