@@ -7,8 +7,7 @@ User=henry
 Group=www-data
 WorkingDirectory=/www/githook
 Environment="ENV=prod"
-Environment="GITHOOK=/home/henry/miniconda3/envs/githook/bin"
-ExecStart=$GITHOOK/python main.py
+ExecStart=/home/henry/miniconda3/envs/githook/bin/python main.py
 Restart=always
 
 [Install]
